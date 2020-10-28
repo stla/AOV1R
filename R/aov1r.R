@@ -101,3 +101,78 @@ predict.aov1r <- function(object, level=0.95, ...){
   attr(bounds, "df") <- nu
   return(bounds)
 }
+
+
+#' @title Confidence intervals
+#' @description Confidence intervals for the one-way random effect ANOVA.
+#'
+#' @param object an output of \code{\link{aov1r}}
+#' @param level confidence level
+#' @param SDs logical, whether to return confidence intervals about the
+#'   standard deviations or about the variances
+#' @param ... ignored
+#'
+#' @return A dataframe providing the bounds of the confidence
+#'   intervals.
+#' @export
+#' @importFrom stats qf
+#'
+#' @examples
+#' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+#' fit <- aov1r(y ~ group, data=dat)
+#' confint(fit)
+confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
+  I <- object[["Design"]][["I"]]
+  J <- object[["Design"]][["Jh"]]
+  N <- object[["Design"]][["N"]]
+  if(N != I*J){
+    warning(
+      "Design is not balanced - confidence intervals are not valid."
+    )
+  }
+  SSb <- object[["Sums of squares"]][["ssb"]]
+  SSw <- object[["Sums of squares"]][["ssw"]]
+  sigma2w <- object[["Variance components"]][["sigma2w"]]
+  sigma2b <- object[["Variance components"]][["sigma2b"]]
+  DFb <- I - 1 # between df
+  DFw <- I * (J - 1) # within df
+  MSSb <- SSb/DFb; MSSw <- SSw/DFw # mean sums of squares
+  a <- (1 - level) / 2
+  ## Within variance confidence interval
+  withinLCB <- sigma2w / qf(1-a, DFw, Inf)  # Within lwr
+  withinUCB <- sigma2w / qf(a, DFw, Inf) # Within upr
+  ## Between variance confidence interval
+  G1 <- 1 - (1 / qf(1-a, DFb, Inf))
+  G2 <- 1 - (1 / qf(1-a, DFw, Inf))
+  H1 <- (1 / qf(a, DFb, Inf)) - 1
+  H2 <- (1 / qf(a, DFw, Inf)) - 1
+  G12 <- ((qf(1-a, DFb, DFw) - 1)^2 - (G1^2 * qf(1-a, DFb, DFw)^2) - (H2^2)) /
+    qf(1-a, DFb, DFw)
+  H12 <- ((1 - qf(a, DFb, DFw))^2 - H1^2 * qf(a, DFb, DFw)^2 - G2^2) /
+    qf(a, DFb, DFw)
+  Vu <- H1^2 * MSSb^2 + G2^2 * MSSw^2 + H12 * MSSb * MSSw
+  Vl <- G1^2 * MSSb^2 + H2^2 * MSSw^2 + G12 * MSSw * MSSb
+  betweenLCB <- (MSSb - MSSw - sqrt(Vl)) / J # Betwen lwr
+  betweenUCB <- (MSSb - MSSw + sqrt(Vu)) / J # Between upr
+  ## Total variance confidence interval
+  sigma2tot <- sigma2w + sigma2b # estimate
+  totalLCB <- sigma2tot - (sqrt(G1^2 * MSSb^2 + G2^2 * (J - 1)^2 * MSSw^2) / J) # Total lwr
+  totalUCB <- sigma2tot + (sqrt(H1^2 * MSSb^2 + H2^2 * (J - 1)^2 * MSSw^2) / J) # Total upr
+  # Output
+  estimate <- c(sigma2w, sigma2b, sigma2tot)
+  lwr <- c(withinLCB, betweenLCB, totalLCB)
+  upr <- c(withinUCB, betweenUCB, totalUCB)
+  if(SDs){
+    estimate <- sign(estimate) * sqrt(abs(estimate))
+    lwr <- sign(lwr) * sqrt(abs(lwr))
+    upr <- sign(upr) * sqrt(abs(upr))
+  }
+  out <- data.frame(
+    estimate = estimate,
+    lwr = lwr,
+    upr = upr
+  )
+  rownames(out) <- c("within", "between", "total")
+  attr(out, "confidence level") <- level
+  out
+}

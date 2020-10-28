@@ -2,7 +2,6 @@
 % Please edit documentation in R/aov1r.R
 \name{aov1r}
 \alias{aov1r}
-\alias{aov1r}
 \alias{summary.aov1r}
 \alias{print.summary.aov1r}
 \title{One-way random effect ANOVA}
