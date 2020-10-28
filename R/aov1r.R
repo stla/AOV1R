@@ -115,7 +115,7 @@ predict.aov1r <- function(object, level=0.95, ...){
 #' @return A dataframe providing the bounds of the confidence
 #'   intervals.
 #' @export
-#' @importFrom stats qf
+#' @importFrom stats qf qt sd
 #'
 #' @examples
 #' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
@@ -138,6 +138,11 @@ confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
   DFw <- I * (J - 1) # within df
   MSSb <- SSb/DFb; MSSw <- SSw/DFw # mean sums of squares
   a <- (1 - level) / 2
+  ## Grandmean confidence interval
+  tstar <- qt(1-a, DFb)
+  stdev <- sd(object[["groupmeans"]][["mean"]])
+  muLCB <- object[["grandmean"]] - tstar * stdev / sqrt(I)
+  muUCB <- object[["grandmean"]] + tstar * stdev / sqrt(I)
   ## Within variance confidence interval
   withinLCB <- sigma2w / qf(1-a, DFw, Inf)  # Within lwr
   withinUCB <- sigma2w / qf(a, DFw, Inf) # Within upr
@@ -168,11 +173,11 @@ confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
     upr <- sign(upr) * sqrt(abs(upr))
   }
   out <- data.frame(
-    estimate = estimate,
-    lwr = lwr,
-    upr = upr
+    estimate = c(object[["grandmean"]], estimate),
+    lwr = c(muLCB, lwr),
+    upr = c(muUCB, upr)
   )
-  rownames(out) <- c("within", "between", "total")
+  rownames(out) <- c("grandmean", "within", "between", "total")
   attr(out, "confidence level") <- level
   attr(out, "standard deviations") <- SDs
   class(out) <- c("confint.aov1r", class(out))
