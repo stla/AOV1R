@@ -33,7 +33,7 @@ aov1r <- function(formula, data=NULL){
   ssb <- Jh*with(DT2, crossprod(Mean-means)[1L,1L])
   terms <- c(y = as.character(lazyeval::f_lhs(formula)),
              group = as.character(lazyeval::f_rhs(formula)))
-  N <- nrow(data)
+  N <- nrow(DT)
   out <- list(
     "Sums of squares" = c(ssw=ssw, ssb=ssb),
     "Variance components" = c(sigma2w = ssw/(N-I), sigma2b = (ssb/(I-1)-ssw/(N-I))/Jh),
