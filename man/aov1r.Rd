@@ -30,7 +30,7 @@ aov1r(formula, data = NULL)
 Fits a one-way random effect ANOVA model.
 }
 \examples{
-dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 fit <- aov1r(y ~ group, data=dat)
 summary(fit)
 }

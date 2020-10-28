@@ -20,7 +20,7 @@ A vector of length two, the bounds of the prediction interval.
 Prediction interval for the one-way random effect ANOVA.
 }
 \examples{
-dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 fit <- aov1r(y ~ group, data=dat)
 predict(fit)
 }

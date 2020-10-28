@@ -1,4 +1,4 @@
-#' Pivotal quantities
+#' Generalized pivotal quantities
 #'
 #' Simulates from the generalized pivotal quantities.
 #'
@@ -11,12 +11,22 @@
 #' @export
 #'
 #' @examples
-#' dat <- simAV1R(I=20, J=5, mu=10, sigmab=1, sigmaw=1)
+#' dat <- simAOV1R(I=20, J=5, mu=10, sigmab=1, sigmaw=1)
 #' fit <- aov1r(y ~ group, data=dat)
 #' pivsims <- pivotal(fit)
 #' pivsims$G_sigma2tot <- pivsims$G_sigma2b + pivsims$G_sigma2w
+#' # Generalized confidence intervals:
 #' lapply(pivsims, quantile, probs = c(0.025, 0.975))
+#' # compare with the frequentist confidence intervals:
 #' confint(fit, SDs = FALSE)
+#' # Generalized prediction interval:
+#' with(
+#'   pivsims,
+#'   quantile(rnorm(length(G_mu), G_mu, sqrt(G_sigma2tot)),
+#'            probs = c(0.025, 0.975))
+#' )
+#' # compare with the frequentist prediction interval:
+#' predict(fit)
 pivotal <- function(fit, n=10000){
   I <- fit[["Design"]][["I"]]
   J <- fit[["Design"]][["Jh"]]

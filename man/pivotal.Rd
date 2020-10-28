@@ -2,7 +2,7 @@
 % Please edit documentation in R/pivotal.R
 \name{pivotal}
 \alias{pivotal}
-\title{Pivotal quantities}
+\title{Generalized pivotal quantities}
 \usage{
 pivotal(fit, n = 10000)
 }
@@ -18,10 +18,20 @@ The simulations in a list.
 Simulates from the generalized pivotal quantities.
 }
 \examples{
-dat <- simAV1R(I=20, J=5, mu=10, sigmab=1, sigmaw=1)
+dat <- simAOV1R(I=20, J=5, mu=10, sigmab=1, sigmaw=1)
 fit <- aov1r(y ~ group, data=dat)
 pivsims <- pivotal(fit)
 pivsims$G_sigma2tot <- pivsims$G_sigma2b + pivsims$G_sigma2w
+# Generalized confidence intervals:
 lapply(pivsims, quantile, probs = c(0.025, 0.975))
+# compare with the frequentist confidence intervals:
 confint(fit, SDs = FALSE)
+# Generalized prediction interval:
+with(
+  pivsims,
+  quantile(rnorm(length(G_mu), G_mu, sqrt(G_sigma2tot)),
+           probs = c(0.025, 0.975))
+)
+# compare with the frequentist prediction interval:
+predict(fit)
 }

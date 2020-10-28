@@ -16,8 +16,8 @@
 #' @importFrom cellranger num_to_letter
 #'
 #' @examples
-#' simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
-simAV1R <- function(I, J, mu, sigmab, sigmaw){
+#' simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+simAOV1R <- function(I, J, mu, sigmab, sigmaw){
   setNames(
     stack(
       setNames(

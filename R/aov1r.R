@@ -1,4 +1,3 @@
-
 #' @name aov1r
 #' @rdname aov1r
 #' @title One-way random effect ANOVA
@@ -15,7 +14,7 @@
 #' @importFrom lazyeval f_eval_lhs f_eval_rhs f_lhs f_rhs
 #'
 #' @examples
-#' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+#' dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 #' fit <- aov1r(y ~ group, data=dat)
 #' summary(fit)
 NULL
@@ -29,6 +28,7 @@ aov1r <- function(formula, data=NULL){
   ssw <- with(DT, crossprod(y-means)[1L,1L])
   DT2 <- DT[, list(means = means[1L], Ji = .N), by="group"]
   DT2[, Mean:=mean(means)]
+  balanced <- all(DT2[["Ji"]][1L] == DT2[["Ji"]][-1L])
   I <- nrow(DT2)
   Jh <- I/sum(1/DT2[["Ji"]])
   ssb <- Jh*with(DT2, crossprod(Mean-means)[1L,1L])
@@ -39,6 +39,7 @@ aov1r <- function(formula, data=NULL){
     "Sums of squares" = c(ssw=ssw, ssb=ssb),
     "Variance components" = c(sigma2w = ssw/(N-I), sigma2b = (ssb/(I-1)-ssw/(N-I))/Jh),
     "Design" = c(I=I, Jh=Jh, N=N),
+    "Balanced" = balanced,
     "grandMean" = DT2$Mean[1L],
     "groupMeans" =
       setNames(
@@ -48,7 +49,7 @@ aov1r <- function(formula, data=NULL){
     "terms" = terms
   )
   class(out) <- "aov1r"
-  return(out)
+  out
 }
 
 #' @rdname aov1r
@@ -58,7 +59,8 @@ summary.aov1r <- function(object, ...){
   class(out) <- "summary.aov1r"
   out[["Response"]] <- object$terms[["y"]]
   out[["Factor"]] <- object$terms[["group"]]
-  return(out)
+  attr(out, "Balanced") <- object[["Balanced"]]
+  out
 }
 
 #' @rdname aov1r
@@ -66,6 +68,11 @@ summary.aov1r <- function(object, ...){
 print.summary.aov1r <- function(x, ...){
   for(foo in names(x)){
     cat(foo, ": ", x[[foo]], "\n", sep="")
+  }
+  if(attr(x, "Balanced")){
+    cat("Design is balanced.\n")
+  }else{
+    cat("Design is *not* balanced.\n")
   }
 }
 
@@ -81,7 +88,7 @@ print.summary.aov1r <- function(x, ...){
 #' @importFrom stats qt
 #'
 #' @examples
-#' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+#' dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 #' fit <- aov1r(y ~ group, data=dat)
 #' predict(fit)
 predict.aov1r <- function(object, level=0.95, ...){
@@ -100,7 +107,7 @@ predict.aov1r <- function(object, level=0.95, ...){
   names(bounds) <- paste0(100*c(alpha.over.two, 1-alpha.over.two), "%")
   attr(bounds, "std.error") <- sqrt(v)
   attr(bounds, "df") <- nu
-  return(bounds)
+  bounds
 }
 
 
@@ -121,14 +128,14 @@ predict.aov1r <- function(object, level=0.95, ...){
 #' @importFrom stats qf qt sd
 #'
 #' @examples
-#' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
+#' dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 #' fit <- aov1r(y ~ group, data=dat)
 #' confint(fit)
 confint.aov1r <- function(object, parm, level = 0.95, SDs = TRUE, ...){
   I <- object[["Design"]][["I"]]
   J <- object[["Design"]][["Jh"]]
-  N <- object[["Design"]][["N"]]
-  if(N != I*J){
+  balanced <- object[["Balanced"]]
+  if(!balanced){
     warning(
       "Design is not balanced - confidence intervals are not valid."
     )
@@ -195,5 +202,5 @@ print.confint.aov1r <- function(x, ...){
   cat('\nattr(,"confidence level")\n')
   cat(capture.output(attr(x,"confidence level")))
   cat('\nattr(,"standard deviations")\n')
-  cat(capture.output(attr(x,"standard deviations")))
+  cat(capture.output(attr(x,"standard deviations")), "\n")
 }

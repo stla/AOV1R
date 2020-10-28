@@ -1,11 +1,10 @@
 Package: AOV1R
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Inference in the Balanced One-Way ANOVA Model with Random Factor
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Stéphane Laurent
+Maintainer: Stéphane Laurent <laurent_step@outlook.fr>
+Description: Provides functions to perform statistical inference in the balanced one-way ANOVA model with a random factor: confidence intervals, prediction interval, and Weerahandi generalized pivotal quantities.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
