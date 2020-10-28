@@ -5,12 +5,14 @@
 \alias{print.confint.aov1r}
 \title{Confidence intervals}
 \usage{
-\method{confint}{aov1r}(object, level = 0.95, SDs = TRUE, ...)
+\method{confint}{aov1r}(object, parm, level = 0.95, SDs = TRUE, ...)
 
 \method{print}{confint.aov1r}(x, ...)
 }
 \arguments{
 \item{object}{an output of \code{\link{aov1r}}}
+
+\item{parm}{ignored}
 
 \item{level}{confidence level}
 
@@ -18,6 +20,8 @@
 standard deviations or about the variances}
 
 \item{...}{ignored}
+
+\item{x}{an output of \code{confint} applied to an \code{aov1r} object}
 }
 \value{
 A dataframe providing the bounds of the confidence

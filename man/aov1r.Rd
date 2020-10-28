@@ -17,6 +17,8 @@ aov1r(formula, data = NULL)
 
 \item{data}{optional dataframe}
 
+\item{object}{an \code{aov1r} object (output of an \code{aov1r} call)}
+
 \item{...}{ignored}
 
 \item{x}{output of \code{summary}}

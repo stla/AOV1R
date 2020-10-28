@@ -7,6 +7,7 @@
 #' @param formula a formula of the form \code{y~group}
 #' @param data optional dataframe
 #' @param x output of \code{summary}
+#' @param object an \code{aov1r} object (output of an \code{aov1r} call)
 #' @param ... ignored
 #'
 #' @return \code{aov1r} returns an object of class \code{aov1r};
@@ -38,8 +39,8 @@ aov1r <- function(formula, data=NULL){
     "Sums of squares" = c(ssw=ssw, ssb=ssb),
     "Variance components" = c(sigma2w = ssw/(N-I), sigma2b = (ssb/(I-1)-ssw/(N-I))/Jh),
     "Design" = c(I=I, Jh=Jh, N=N),
-    "grandmean" = DT2$Mean[1L],
-    "groupmeans" =
+    "grandMean" = DT2$Mean[1L],
+    "groupMeans" =
       setNames(
         as.data.frame(DT2[, .SD, .SDcols=c("group", "means")]),
         c("group", "mean")),
@@ -94,7 +95,7 @@ predict.aov1r <- function(object, level=0.95, ...){
   v <- a*SSb+b*SSw # estimates the variance of (Ynew-Ybar)
   nu <- v^2/((a*SSb)^2/(I-1)+(b*SSw)^2/(N-I)) # Satterthwaite degrees of freedom
   alpha.over.two <- (1-level)/2
-  bounds <-  object[["grandmean"]] +
+  bounds <-  object[["grandMean"]] +
     c(-1,1)*sqrt(v)*qt(1-alpha.over.two, nu)
   names(bounds) <- paste0(100*c(alpha.over.two, 1-alpha.over.two), "%")
   attr(bounds, "std.error") <- sqrt(v)
@@ -107,9 +108,11 @@ predict.aov1r <- function(object, level=0.95, ...){
 #' @description Confidence intervals for the one-way random effect ANOVA.
 #'
 #' @param object an output of \code{\link{aov1r}}
+#' @param parm ignored
 #' @param level confidence level
 #' @param SDs logical, whether to return confidence intervals about the
 #'   standard deviations or about the variances
+#' @param x an output of \code{confint} applied to an \code{aov1r} object
 #' @param ... ignored
 #'
 #' @return A dataframe providing the bounds of the confidence
@@ -121,7 +124,7 @@ predict.aov1r <- function(object, level=0.95, ...){
 #' dat <- simAV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 #' fit <- aov1r(y ~ group, data=dat)
 #' confint(fit)
-confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
+confint.aov1r <- function(object, parm, level = 0.95, SDs = TRUE, ...){
   I <- object[["Design"]][["I"]]
   J <- object[["Design"]][["Jh"]]
   N <- object[["Design"]][["N"]]
@@ -138,11 +141,11 @@ confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
   DFw <- I * (J - 1) # within df
   MSSb <- SSb/DFb; MSSw <- SSw/DFw # mean sums of squares
   a <- (1 - level) / 2
-  ## Grandmean confidence interval
+  ## grandMean confidence interval
   tstar <- qt(1-a, DFb)
-  stdev <- sd(object[["groupmeans"]][["mean"]])
-  muLCB <- object[["grandmean"]] - tstar * stdev / sqrt(I)
-  muUCB <- object[["grandmean"]] + tstar * stdev / sqrt(I)
+  stdev <- sd(object[["groupMeans"]][["mean"]])
+  muLCB <- object[["grandMean"]] - tstar * stdev / sqrt(I)
+  muUCB <- object[["grandMean"]] + tstar * stdev / sqrt(I)
   ## Within variance confidence interval
   withinLCB <- sigma2w / qf(1-a, DFw, Inf)  # Within lwr
   withinUCB <- sigma2w / qf(a, DFw, Inf) # Within upr
@@ -173,11 +176,11 @@ confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
     upr <- sign(upr) * sqrt(abs(upr))
   }
   out <- data.frame(
-    estimate = c(object[["grandmean"]], estimate),
+    estimate = c(object[["grandMean"]], estimate),
     lwr = c(muLCB, lwr),
     upr = c(muUCB, upr)
   )
-  rownames(out) <- c("grandmean", "within", "between", "total")
+  rownames(out) <- c("grandMean", "within", "between", "total")
   attr(out, "confidence level") <- level
   attr(out, "standard deviations") <- SDs
   class(out) <- c("confint.aov1r", class(out))

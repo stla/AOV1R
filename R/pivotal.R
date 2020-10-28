@@ -6,6 +6,8 @@
 #' @param n number of simulations
 #'
 #' @return The simulations in a list.
+#'
+#' @importFrom stats rchisq
 #' @export
 #'
 #' @examples
@@ -25,20 +27,20 @@ pivotal <- function(fit, n=10000){
   U2b <- rchisq(n, I-1)
   U2w <- rchisq(n, N-I)
   list(
-    G_mu = fit[["grandmean"]] - Z/sqrt(U2b)*sqrt(ssb/I/J),
+    G_mu = fit[["grandMean"]] - Z/sqrt(U2b)*sqrt(ssb/I/J),
     G_sigma2b = 1/J*(ssb/U2b - ssw/U2w),
     G_sigma2w = ssw/U2w
   )
 }
 
-pivotal0 <- function(fit, Z, U2b, U2w){
-  I <- fit[["Design"]][["I"]]
-  J <- fit[["Design"]][["Jh"]]
-  ssb <- fit[["Sums of squares"]][["ssb"]]
-  ssw <- fit[["Sums of squares"]][["ssw"]]
-  list(
-    G_mu = fit[["grandmean"]] - Z/sqrt(U2b)*sqrt(ssb/I/J),
-    G_sigma2b = 1/J*(ssb/U2b - ssw/U2w),
-    G_sigma2w = ssw/U2w
-  )
-}
+# pivotal0 <- function(fit, Z, U2b, U2w){
+#   I <- fit[["Design"]][["I"]]
+#   J <- fit[["Design"]][["Jh"]]
+#   ssb <- fit[["Sums of squares"]][["ssb"]]
+#   ssw <- fit[["Sums of squares"]][["ssw"]]
+#   list(
+#     G_mu = fit[["grandmean"]] - Z/sqrt(U2b)*sqrt(ssb/I/J),
+#     G_sigma2b = 1/J*(ssb/U2b - ssw/U2w),
+#     G_sigma2w = ssw/U2w
+#   )
+# }
