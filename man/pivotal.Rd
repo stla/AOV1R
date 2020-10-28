@@ -17,3 +17,11 @@ The simulations in a list.
 \description{
 Simulates from the generalized pivotal quantities.
 }
+\examples{
+dat <- simAV1R(I=20, J=5, mu=10, sigmab=1, sigmaw=1)
+fit <- aov1r(y ~ group, data=dat)
+pivsims <- pivotal(fit)
+pivsims$G_sigma2tot <- pivsims$G_sigma2b + pivsims$G_sigma2w
+lapply(pivsims, quantile, probs = c(0.025, 0.975))
+confint(fit, SDs = FALSE)
+}

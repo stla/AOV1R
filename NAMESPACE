@@ -2,6 +2,7 @@
 
 S3method(confint,aov1r)
 S3method(predict,aov1r)
+S3method(print,confint.aov1r)
 S3method(print,summary.aov1r)
 S3method(summary,aov1r)
 export(aov1r)
@@ -18,4 +19,5 @@ importFrom(stats,qf)
 importFrom(stats,qt)
 importFrom(stats,rnorm)
 importFrom(stats,setNames)
+importFrom(utils,capture.output)
 importFrom(utils,stack)

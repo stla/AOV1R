@@ -174,5 +174,18 @@ confint.aov1r <- function(object, level=0.95, SDs = TRUE, ...){
   )
   rownames(out) <- c("within", "between", "total")
   attr(out, "confidence level") <- level
+  attr(out, "standard deviations") <- SDs
+  class(out) <- c("confint.aov1r", class(out))
   out
+}
+
+#' @rdname confint.aov1r
+#' @importFrom utils capture.output
+#' @export
+print.confint.aov1r <- function(x, ...){
+  cat(capture.output(print.data.frame(x)), sep = "\n")
+  cat('\nattr(,"confidence level")\n')
+  cat(capture.output(attr(x,"confidence level")))
+  cat('\nattr(,"standard deviations")\n')
+  cat(capture.output(attr(x,"standard deviations")))
 }

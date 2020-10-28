@@ -2,9 +2,12 @@
 % Please edit documentation in R/aov1r.R
 \name{confint.aov1r}
 \alias{confint.aov1r}
+\alias{print.confint.aov1r}
 \title{Confidence intervals}
 \usage{
 \method{confint}{aov1r}(object, level = 0.95, SDs = TRUE, ...)
+
+\method{print}{confint.aov1r}(x, ...)
 }
 \arguments{
 \item{object}{an output of \code{\link{aov1r}}}
