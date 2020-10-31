@@ -36,3 +36,9 @@ with(
 # compare with the frequentist prediction interval:
 predict(fit)
 }
+\references{
+Samaradasa Weerahandi.
+\emph{Exact Statistical Methods for Data Analysis}.
+Springer, New York, NY (1995).
+<doi:10.1007/978-1-4612-0825-9>
+}

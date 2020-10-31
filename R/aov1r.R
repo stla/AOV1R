@@ -124,6 +124,12 @@ predict.aov1r <- function(object, level=0.95, ...){
 #'
 #' @return A dataframe providing the bounds of the confidence
 #'   intervals.
+#'
+#' @references Richard K. Burdick, Franklin. A. Graybill.
+#' \emph{Confidence Intervals on Variance Components}.
+#' CRC Press; 1st edition (1992).
+#' ISBN-13: 978-0824786441.
+#'
 #' @export
 #' @importFrom stats qf qt sd
 #'
