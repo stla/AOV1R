@@ -76,8 +76,9 @@ print.summary.aov1r <- function(x, ...){
   }
 }
 
-#' @title Prediction interval
-#' @description Prediction interval for the one-way random effect ANOVA.
+#' @title Prediction interval for one-way random effect ANOVA
+#' @description Prediction interval for the one-way random effect ANOVA model,
+#'   based on a Satterthwaite approximation of the degrees of freedom.
 #'
 #' @param object an output of \code{\link{aov1r}}
 #' @param level confidence level
@@ -86,6 +87,11 @@ print.summary.aov1r <- function(x, ...){
 #' @return A vector of length two, the bounds of the prediction interval.
 #' @export
 #' @importFrom stats qt
+#'
+#' @references T. Y. Lin, C. T. Liao.
+#'   \emph{Prediction intervals for general balanced linear random models}.
+#'   Journal of Statistical Planning and Inference 138 (2008), 3164 – 3175.
+#'   <doi:10.1016/j.jspi.2008.01.001>
 #'
 #' @examples
 #' dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)

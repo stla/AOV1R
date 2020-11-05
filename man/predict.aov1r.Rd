@@ -2,7 +2,7 @@
 % Please edit documentation in R/aov1r.R
 \name{predict.aov1r}
 \alias{predict.aov1r}
-\title{Prediction interval}
+\title{Prediction interval for one-way random effect ANOVA}
 \usage{
 \method{predict}{aov1r}(object, level = 0.95, ...)
 }
@@ -17,10 +17,17 @@
 A vector of length two, the bounds of the prediction interval.
 }
 \description{
-Prediction interval for the one-way random effect ANOVA.
+Prediction interval for the one-way random effect ANOVA model,
+  based on a Satterthwaite approximation of the degrees of freedom.
 }
 \examples{
 dat <- simAOV1R(I=2, J=3, mu=10, sigmab=1, sigmaw=1)
 fit <- aov1r(y ~ group, data=dat)
 predict(fit)
+}
+\references{
+T. Y. Lin, C. T. Liao.
+  \emph{Prediction intervals for general balanced linear random models}.
+  Journal of Statistical Planning and Inference 138 (2008), 3164 – 3175.
+  <doi:10.1016/j.jspi.2008.01.001>
 }
